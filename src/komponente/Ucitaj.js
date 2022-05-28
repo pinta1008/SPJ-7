@@ -4,7 +4,7 @@ import {Link, Outlet} from "react-router-dom";
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 const readUrl = "http://localhost/react-lv7-php/read.php";
-//const deleteUrl ="";
+
 function Ucitaj()
 {
     const[artikli, setArtikli] = useState([]);
@@ -12,9 +12,11 @@ function Ucitaj()
         getArtikli()
     }, []);
 
-    //const obrisiArtikl = (id) => {
-        //if(window.confirm("Zelite li obirsati automobil s idjem:" + id))
-   // }
+    const obrisiArtikl = (Id) => {
+        if(window.confirm("Zelite li obirsati artikl s idjem:" + Id));
+        deleteConfirm(Id);
+    }
+   
 
     async function getArtikli(){
         try{
@@ -24,6 +26,15 @@ function Ucitaj()
             console.error(error);
         }
     }
+
+    async function deleteConfirm(Id)
+    {
+        const deleteUrl ="http://localhost/react-lv7-php/delete.php";
+        var params = new URLSearchParams();
+        params.append('Id', Id);
+        axios.post(deleteUrl, params).then(() => {getArtikli()});
+    }
+
     return(
         <>
             <table className="table table-stripped">
@@ -46,6 +57,8 @@ function Ucitaj()
                             <td>{artikl.Model}</td>
                             <td>{artikl.Cijena}</td>
                             <td>{artikl.Kolicina}</td>
+                            <td><button className="btn btn-outline-danger" onClick={()=>obrisiArtikl(artikl.Id)}>Delete</button></td>
+                            <td><Link to={`Edit/${artikl.Id}`} className="btn btn-outline-secondary">Edit</Link></td>
                             </tr>
                             )
                     })}
@@ -54,6 +67,16 @@ function Ucitaj()
 
         </>
     )
+}
+export function Pretrazivanje()
+{
+    const[query,setQuery] = useState("");
+    const keys = ["first_name","last_name","email"];
+    const search = (data) => {
+        return data.filter((item) => 
+        keys.some((key) => item[key].toLowerCase().includes(query))
+        );
+    };
 }
 
 export default Ucitaj;
